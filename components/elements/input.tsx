@@ -15,10 +15,11 @@ function InputBox({ name, type, placeholder }: IInputBox) {
         className={`shadow-md p-2 peer outline-none`}
         type={type}
         name={name}
+        placeholder=""
         required
       />
       <label
-        className={`transition-all duration-200 ease-in-out absolute pointer-events-none left-3 top-7 peer-focus:top-0 peer-focus:left-0 peer-focus:text-sm peer-valid:top-0 peer-valid:left-0 peer-valid:text-sm`}
+        className={`transition-all duration-200 ease-in-out absolute pointer-events-none left-3 top-7 peer-focus:top-0 peer-focus:left-0 peer-focus:text-sm peer-[&:not(:placeholder-shown):not(:focus)]:top-0 peer-[&:not(:placeholder-shown):not(:focus)]:left-0 peer-[&:not(:placeholder-shown):not(:focus)]:text-sm`}
       >
         {placeholder}
       </label>
