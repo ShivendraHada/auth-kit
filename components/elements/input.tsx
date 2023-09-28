@@ -12,7 +12,7 @@ function InputBox({ name, type, placeholder }: IInputBox) {
   return (
     <div className="pt-5 pb-2 mx-4 mt-1 flex flex-col relative">
       <input
-        className={`shadow-md p-2 peer outline-none`}
+        className={`shadow py-2 px-3 peer outline-none text-md`}
         type={type}
         name={name}
         placeholder=""
