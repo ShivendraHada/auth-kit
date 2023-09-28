@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
-import AuthModal from "@/components/modals/authModal";
+import AuthModal from "@/components/modals/AuthModal";
 
 export default function Register() {
   const router = useRouter();
@@ -25,10 +25,6 @@ export default function Register() {
       toast.error("Password must be same!");
       return;
     }
-
-    console.log(email);
-    console.log(password);
-    console.log(e.target["confirmPassword"].value);
   };
 
   return (

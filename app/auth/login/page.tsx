@@ -1,12 +1,11 @@
 "use client";
-
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import AuthModal from "@/components/modals/authModal";
+import AuthModal from "@/components/modals/AuthModal";
 
 export default function Login() {
   const router = useRouter();
