@@ -21,17 +21,22 @@ const authOptions: NextAuthOptions = {
         // })
         // const user = await res.json()
 
-        // // If no error and we have user data, return it
-        // if (res.ok && user) {
-        //   return user
-        // }
-        // // Return null if user data could not be retrieved
-        // return null
-        return {
+        const user = {
           id: "001",
           name: "Shivendra",
           email: credentials?.username,
         };
+
+        // // If no error and we have user data, return it
+        if (
+          credentials.username == "shivendrahada24@gmail.com" &&
+          credentials.password == "12345" &&
+          user
+        ) {
+          return user;
+        }
+        // // Return null if user data could not be retrieved
+        return null;
       },
     }),
   ],

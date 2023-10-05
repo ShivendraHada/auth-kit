@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import AuthModal from "@/components/modals/AuthModal";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const router = useRouter();
@@ -13,12 +14,17 @@ export default function Login() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await signIn("credentials", {
+    const res = await signIn("credentials", {
       redirect: false,
       callbackUrl: "/",
       username: e.target["email"].value,
       password: e.target["password"].value,
     });
+    if (res?.error) {
+      toast.error("Invalid Credentials! Please try again");
+      return;
+    }
+    toast.success("Login Successfully!");
   };
 
   useEffect(() => {
