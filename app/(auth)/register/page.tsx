@@ -39,7 +39,7 @@ export default function Register() {
           placeholder="Confirm Password"
         />
         <SubmitButton text="Register" />
-        <a href="/auth/login" className="text-center text-xs">
+        <a href="/login" className="text-center text-xs">
           Login
         </a>
       </form>

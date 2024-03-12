@@ -8,12 +8,12 @@ function Dashboard() {
   const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/auth/login");
+      router.push("/login");
     },
   });
   const handleLogout = () => {
     toast.success("Logged out successfully!");
-    signOut({ callbackUrl: "/auth/login" });
+    signOut({ callbackUrl: "/login" });
   };
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">

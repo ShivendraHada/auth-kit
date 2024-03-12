@@ -33,16 +33,20 @@ export default function Login() {
 
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">
-      <form className="flex flex-col py-2" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col py-2"
+        onSubmit={handleSubmit}
+        method="POST"
+      >
         <InputBox type="email" name="email" placeholder="Email Address" />
         <InputBox type="password" name="password" placeholder="Password" />
         <SubmitButton text="Login" />
         <div className="text-center text-xs">
-          <a href="/auth/register" className="hover:text-green-400">
+          <a href="/register" className="hover:text-green-400">
             Register
           </a>{" "}
           |{" "}
-          <a href="/auth/forgotPassword" className="hover:text-red-400">
+          <a href="/forgotPassword" className="hover:text-red-400">
             Forgot Password?
           </a>
         </div>

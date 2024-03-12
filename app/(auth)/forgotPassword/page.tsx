@@ -46,11 +46,11 @@ export default function ForgotPassword() {
           }
         />
         <div className="text-center text-xs">
-          <a href="/auth/login" className="hover:text-green-400">
+          <a href="/login" className="hover:text-green-400">
             Login
           </a>{" "}
           |{" "}
-          <a href="/auth/register" className="hover:text-red-400">
+          <a href="/register" className="hover:text-red-400">
             Register
           </a>
         </div>
