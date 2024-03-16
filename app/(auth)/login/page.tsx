@@ -14,11 +14,12 @@ export default function Login() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    const data = new FormData(e.target);
     const res = await signIn("credentials", {
       redirect: false,
       callbackUrl: "/",
-      username: e.target["email"].value,
-      password: e.target["password"].value,
+      username: data.get("email"),
+      password: data.get("password"),
     });
     if (res?.error) {
       toast.error("Invalid Credentials! Please try again");
