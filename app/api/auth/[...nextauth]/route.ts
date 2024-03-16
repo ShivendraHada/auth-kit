@@ -1,46 +1,64 @@
+import User from "@/models/UserModel";
+import { DBConnect } from "@/utils/DBConnect";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
 
+async function login(credentials: any) {
+  try {
+    DBConnect();
+    const user = await User.findOne({ email: credentials.email });
+    if (!user) throw new Error("Invalid Credentials");
+    const isValid = await bcrypt.compare(
+      credentials.password,
+      user.get("password")
+    );
+    if (!isValid) throw new Error("Invalid Credentials");
+    return user;
+  } catch (error) {
+    throw new Error("Something Went Wrong!");
+  }
+}
 const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "Username" },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "********",
-        },
-      },
-      async authorize(credentials: any, req: any) {
-        // const res = await fetch("/your/endpoint", {
-        //   method: 'POST',
-        //   body: JSON.stringify(credentials),
-        //   headers: { "Content-Type": "application/json" }
-        // })
-        // const user = await res.json()
-
-        const user = {
-          id: "001",
-          name: "Shivendra",
-          email: credentials?.username,
-        };
-
-        // // If no error and we have user data, return it
-        if (
-          credentials.username == "shivendrahada24@gmail.com" &&
-          credentials.password == "12345" &&
-          user
-        ) {
+      name: "credentials",
+      credentials: {},
+      async authorize(credentials) {
+        try {
+          const user = await login(credentials);
           return user;
+        } catch (error: any) {
+          console.error("Error: ", error.message);
         }
-        // // Return null if user data could not be retrieved
         return null;
       },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
+  session: {
+    strategy: "jwt",
+    maxAge: 5 * 60 * 60,
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.name = user.name;
+        token.email = user.email;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user = token;
+      }
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

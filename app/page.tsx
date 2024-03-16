@@ -5,12 +5,7 @@ import { toast } from "react-toastify";
 
 function Dashboard() {
   const router = useRouter();
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.push("/login");
-    },
-  });
+  const { data: session, status } = useSession();
   const handleLogout = () => {
     toast.success("Logged out successfully!");
     signOut({ callbackUrl: "/login" });
@@ -18,6 +13,7 @@ function Dashboard() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h2 className="text-4xl text-center w-full break-words">
+        <span>{status}</span>
         {session
           ? `Welcome, ${session.user && session.user.email}`
           : "Please Login First!"}

@@ -11,7 +11,7 @@ import AuthModal from "@/components/modals/AuthModal";
 export default function Register() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [inProgress, setInProgress] = useState<boolean>(false);
 
   useEffect(() => {
     if (session) router.push("/");
@@ -19,14 +19,14 @@ export default function Register() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setInProgress(true);
     const data = new FormData(e.target);
     const email = data.get("email");
     const password = data.get("password");
     const confirmPassword = data.get("confirmPassword");
     if (password !== confirmPassword) {
       toast.error("Password must be same!");
-      setIsSubmitting(false);
+      setInProgress(false);
       return;
     }
     try {
@@ -42,16 +42,15 @@ export default function Register() {
         }),
       });
       const jsonResponse = await response.json();
-      console.log(jsonResponse);
       if (!response.ok) {
         toast.error(jsonResponse.message);
-        setIsSubmitting(false);
+        setInProgress(false);
         return;
       }
       e.target.reset();
       toast.success(jsonResponse.message);
     } catch (error) {}
-    setIsSubmitting(false);
+    setInProgress(false);
   };
 
   return (
@@ -66,15 +65,15 @@ export default function Register() {
           placeholder="Confirm Password"
         />
         <SubmitButton
-          text={isSubmitting ? "Registering..." : "Register"}
-          disabled={isSubmitting}
+          text={inProgress ? "Registering..." : "Register"}
+          disabled={inProgress}
         />
         {/* <button
           type="submit"
           className="px-8 py-2 mt-4 mb-3 bg-[#00ff37bd] w-fit mx-auto shadow font-semibold"
-          disabled={isSubmitting}
+          disabled={inProgress}
         >
-          {isSubmitting ? "Registering..." : "Register"}
+          {inProgress ? "Registering..." : "Register"}
         </button> */}
         <a href="/login" className="text-center text-xs">
           Login
