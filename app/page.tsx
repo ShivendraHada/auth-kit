@@ -7,7 +7,7 @@ function Dashboard() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const handleLogout = () => {
-    toast.success("Logged out successfully!");
+    toast.success("Logout Successful!");
     signOut({ callbackUrl: "/login" });
   };
   return (

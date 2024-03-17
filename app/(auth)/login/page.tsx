@@ -26,13 +26,14 @@ export default function Login() {
       setInProgress(false);
       return;
     }
-    toast.success("Login Successfully!");
+    router.push("/");
+    toast.success("Login Successful!");
     setInProgress(false);
   };
 
   useEffect(() => {
     if (session) router.push("/");
-  }, [session, router]);
+  }, [session]);
 
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">

@@ -7,14 +7,18 @@ import InputBox from "@/components/elements/Input";
 import SubmitButton from "@/components/elements/Button";
 
 export default function ForgotPassword() {
-  const [showOTP, setShowOTP] = useState<boolean>(false);
-  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [showSendOTP, setShowSendOTP] = useState<boolean>(true);
   const router = useRouter();
   const { data: session } = useSession();
 
-  const handleSubmit = (e: any) => {
+  const handleSendOTPSubmit = (e: any) => {
     e.preventDefault();
-    const name = e.target["name"].value;
+    setShowSendOTP(false);
+    const data = new FormData(e.target);
+  };
+  const handleForgotPasswordSubmit = (e: any) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
   };
 
   useEffect(() => {
@@ -22,13 +26,24 @@ export default function ForgotPassword() {
   }, [session, router]);
 
   return (
-    <AuthModal heading="Forgot Password" subHeading="Enter your email address:">
-      <form className="flex flex-col py-1" onSubmit={handleSubmit}>
+    <AuthModal heading="Forgot Password">
+      <form
+        method="POST"
+        className={`flex flex-col py-1 ${showSendOTP ? "block" : "hidden"}`}
+        onSubmit={handleSendOTPSubmit}
+      >
         <InputBox type="email" name="email" placeholder="Email Address" />
-        <div className={showOTP ? "block" : "hidden"}>
+        <SubmitButton text={"Send OTP"} />
+      </form>
+      <form
+        method="POST"
+        className={`flex flex-col py-1 ${showSendOTP ? "hidden" : "block"}`}
+        onSubmit={handleForgotPasswordSubmit}
+      >
+        <div>
           <InputBox type="text" name="otp" placeholder="Enter OTP" />
         </div>
-        <div className={showNewPassword ? "block" : "hidden"}>
+        <div>
           <InputBox
             type="password"
             name="password"
@@ -40,11 +55,7 @@ export default function ForgotPassword() {
             placeholder="Confirm Password"
           />
         </div>
-        <SubmitButton
-          text={
-            showOTP ? "Submit OTP" : showNewPassword ? "Submit" : "Send OTP"
-          }
-        />
+        <SubmitButton text={"Submit OTP"} />
         <div className="text-center text-xs">
           <a href="/login" className="hover:text-green-400">
             Login
