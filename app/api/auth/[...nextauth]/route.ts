@@ -4,8 +4,6 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
-export const maxDuration = 300;
-
 async function login(credentials: any) {
   try {
     await DBConnect();
