@@ -13,7 +13,6 @@ function Dashboard() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h2 className="text-4xl text-center w-full break-words">
-        <span>{status}</span>
         {session
           ? `Welcome, ${session.user && session.user.email}`
           : "Please Login First!"}

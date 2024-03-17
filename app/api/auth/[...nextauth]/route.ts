@@ -4,9 +4,11 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
+export const maxDuration = 300;
+
 async function login(credentials: any) {
   try {
-    DBConnect();
+    await DBConnect();
     const user = await User.findOne({ email: credentials.email });
     if (!user) throw new Error("Invalid Credentials");
     const isValid = await bcrypt.compare(

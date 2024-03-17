@@ -18,8 +18,6 @@ export default function Login() {
     setInProgress(true);
     const data = new FormData(e.target);
     const res = await signIn("credentials", {
-      redirect: false,
-      callbackUrl: "/",
       email: data.get("email"),
       password: data.get("password"),
     });

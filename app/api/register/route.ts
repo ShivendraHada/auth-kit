@@ -3,6 +3,8 @@ import { DBConnect } from "@/utils/DBConnect";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
+export const maxDuration = 300;
+
 export async function POST(req: Request) {
   try {
     await DBConnect();
