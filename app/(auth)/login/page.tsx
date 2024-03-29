@@ -1,52 +1,32 @@
 "use client";
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import AuthModal from "@/components/modals/AuthModal";
+import { useFormState, useFormStatus } from "react-dom";
+import authenticate from "@/lib/actions";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 export default function Login() {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [inProgress, setInProgress] = useState<boolean>(false);
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setInProgress(true);
-    const data = new FormData(e.target);
-    const res = await signIn("credentials", {
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-    if (res?.error) {
-      toast.error("Invalid Credentials! Please try again");
-      setInProgress(false);
-      return;
-    }
-    router.push("/");
-    toast.success("Login Successful!");
-    setInProgress(false);
-  };
+  const { pending } = useFormStatus();
+  const [state, formAction] = useFormState(authenticate, undefined);
 
   useEffect(() => {
-    if (session) router.push("/");
-  }, [session]);
+    toast.warn(`Pending: ${pending}`);
+  }, [pending]);
+
+  useEffect(() => {
+    toast.warn(`State: ${state}`);
+  }, [state]);
 
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">
-      <form
-        className="flex flex-col py-2"
-        onSubmit={handleSubmit}
-        method="POST"
-      >
+      <form className="flex flex-col py-2" action={formAction}>
         <InputBox type="email" name="email" placeholder="Email Address" />
         <InputBox type="password" name="password" placeholder="Password" />
         <SubmitButton
-          text={inProgress ? "Logging in..." : "Login"}
-          disabled={inProgress}
+          text={pending ? "Logging in..." : "Login"}
+          disabled={pending}
         />
         <div className="text-center text-xs">
           <a href="/register" className="hover:text-green-400">

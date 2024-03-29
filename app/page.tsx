@@ -1,31 +1,43 @@
 "use client";
+
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
 
-function Dashboard() {
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  const handleLogout = () => {
+export default function HomePage() {
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+  const handleLogout = async () => {
+    await signOut();
     toast.success("Logout Successful!");
-    signOut({ callbackUrl: "/login" });
   };
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
-      <h2 className="text-4xl text-center w-full break-words">
-        {session
-          ? `Welcome, ${session.user && session.user.email}`
-          : "Please Login First!"}
-      </h2>
-      {session ? (
-        <button className="text-xl mt-5 text-red-500" onClick={handleLogout}>
-          Sign Out!
-        </button>
-      ) : (
-        ""
+    <main className="flex items-center justify-center h-screen">
+      {session?.user && (
+        <>
+          <h1>{session?.user.name}</h1>
+          <br />
+          <button
+            className="font-medium mt-2 text-blue-600 hover:underline"
+            onClick={handleLogout}
+          >
+            Log out
+          </button>
+        </>
       )}
-    </div>
+      {!session?.user && (
+        <Link
+          className="font-medium mt-2 text-blue-600 hover:underline"
+          href="/login"
+        >
+          Login
+        </Link>
+      )}
+    </main>
   );
 }
-
-export default Dashboard;
