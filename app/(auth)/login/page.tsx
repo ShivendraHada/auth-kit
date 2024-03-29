@@ -4,20 +4,9 @@ import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
 import { useFormState, useFormStatus } from "react-dom";
 import authenticate from "@/lib/actions";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
 
 export default function Login() {
-  const { pending } = useFormStatus();
   const [state, formAction] = useFormState(authenticate, undefined);
-
-  useEffect(() => {
-    toast.warn(`Pending: ${pending}`);
-  }, [pending]);
-
-  useEffect(() => {
-    toast.warn(`State: ${state}`);
-  }, [state]);
 
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">
@@ -25,8 +14,9 @@ export default function Login() {
         <InputBox type="email" name="email" placeholder="Email Address" />
         <InputBox type="password" name="password" placeholder="Password" />
         <SubmitButton
-          text={pending ? "Logging in..." : "Login"}
-          disabled={pending}
+          text={"Login"}
+          dynamic={true}
+          inProgressText="Logging in..."
         />
         <div className="text-center text-xs">
           <a href="/register" className="hover:text-green-400">
