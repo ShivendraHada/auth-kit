@@ -2,7 +2,7 @@
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import authenticate from "@/lib/actions";
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">
       <form className="flex flex-col py-2" action={formAction}>
-        <InputBox type="email" name="email" placeholder="Email Address" />
+        <InputBox type="email" name="username" placeholder="Email Address" />
         <InputBox type="password" name="password" placeholder="Password" />
         <SubmitButton
           text={"Login"}

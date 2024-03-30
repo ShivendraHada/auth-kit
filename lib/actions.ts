@@ -1,25 +1,33 @@
 import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export default async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
   try {
-    await signIn("credentials", {
-      username: formData.get("username"),
-      password: formData.get("password"),
+    const response = await signIn("credentials", {
+      username: formData.get("username") as string,
+      password: formData.get("password") as string,
+      redirect: false,
       callbackUrl: "/",
     });
-    return "Login Successful!";
-  } catch (error: any) {
-    console.log("MyError: ", error.message);
-    if (error) {
-      switch (error.type) {
+    if (response?.ok) {
+      toast.success("Login Successful!");
+      window.location.replace("/");
+      return "Login Successful!";
+    } else {
+      switch (response?.error) {
         case "CredentialsSignin":
-          return "Invalid credentials.";
+          toast.warn("Invalid Credentials!");
+          return "Invalid credentials!";
         default:
+          console.error(response?.error);
           return "Something went wrong.";
       }
     }
+  } catch (error: any) {
+    console.log("MyError: ", error.message);
+    return "Something Went Wrong!";
   }
 }
