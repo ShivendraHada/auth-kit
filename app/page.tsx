@@ -17,10 +17,10 @@ export default function HomePage() {
     toast.success("Logout Successful!");
   };
   return (
-    <main className="flex items-center justify-center h-screen">
+    <main className="flex flex-col items-center justify-center h-screen">
       {session?.user && (
         <>
-          <h1>{session?.user.name}</h1>
+          <h1 className="text-3xl">{session?.user.name}</h1>
           <br />
           <button
             className="font-medium mt-2 text-blue-600 hover:underline"

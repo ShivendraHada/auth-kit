@@ -2,20 +2,12 @@
 
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import AuthModal from "@/components/modals/AuthModal";
 
 export default function Register() {
-  const router = useRouter();
-  const { data: session } = useSession();
   const [inProgress, setInProgress] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (session) router.push("/");
-  }, [session, router]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -68,13 +60,6 @@ export default function Register() {
           text={inProgress ? "Registering..." : "Register"}
           disabled={inProgress}
         />
-        {/* <button
-          type="submit"
-          className="px-8 py-2 mt-4 mb-3 bg-[#00ff37bd] w-fit mx-auto shadow font-semibold"
-          disabled={inProgress}
-        >
-          {inProgress ? "Registering..." : "Register"}
-        </button> */}
         <a href="/login" className="text-center text-xs">
           Login
         </a>
