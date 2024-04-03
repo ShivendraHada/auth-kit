@@ -2,17 +2,54 @@
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
-import { useFormState } from "react-dom";
-import authenticate from "@/lib/actions";
+import { FormEvent } from "react";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [state, formAction] = useFormState(authenticate, undefined);
+  const router = useRouter();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const response = await signIn("credentials", {
+        username: formData.get("username") as string,
+        password: formData.get("password") as string,
+        redirect: false,
+      });
+      if (response?.ok) {
+        toast.success("Login Successful!");
+        router.push("/");
+      } else {
+        toast.warn("Invalid Credentials!");
+      }
+    } catch (error: any) {
+      console.error("Login Error: ", error.message);
+      return "Something Went Wrong!";
+    }
+  };
 
   return (
     <AuthModal heading="Login" subHeading="Welcome Back!">
-      <form className="flex flex-col py-2" action={formAction}>
-        <InputBox type="email" name="username" placeholder="Email Address" />
-        <InputBox type="password" name="password" placeholder="Password" />
+      <form
+        autoComplete="off"
+        className="flex flex-col py-2"
+        onSubmit={handleSubmit}
+        method="POST"
+      >
+        <InputBox
+          type="email"
+          name="username"
+          placeholder="Email Address"
+          required
+        />
+        <InputBox
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
         <SubmitButton
           text={"Login"}
           dynamic={true}

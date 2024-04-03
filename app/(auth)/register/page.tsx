@@ -2,63 +2,101 @@
 
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
-import { useState } from "react";
-import { toast } from "react-toastify";
 import AuthModal from "@/components/modals/AuthModal";
+import { FormEvent, useState } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
-  const [inProgress, setInProgress] = useState<boolean>(false);
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const handleSubmit = async (e: any) => {
+  const handleInputChange = (e: any) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setInProgress(true);
-    const data = new FormData(e.target);
-    const email = data.get("email");
-    const password = data.get("password");
-    const confirmPassword = data.get("confirmPassword");
-    if (password !== confirmPassword) {
-      toast.error("Password must be same!");
-      setInProgress(false);
+
+    const { name, email, password, confirmPassword } = formData;
+
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error("All fields are required");
       return;
     }
+
+    if (password !== confirmPassword) {
+      toast.error("Password and Confirm Password must be the same");
+      return;
+    }
+
     try {
-      const response = await fetch("api/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: data.get("name"),
-          email,
-          password,
-        }),
+        body: JSON.stringify({ name, email, password }),
       });
-      const jsonResponse = await response.json();
-      if (!response.ok) {
-        toast.error(jsonResponse.message);
-        setInProgress(false);
-        return;
-      }
-      e.target.reset();
-      toast.success(jsonResponse.message);
-    } catch (error) {}
-    setInProgress(false);
+      toast.success("Registration successful!");
+      router.push("/login");
+    } catch (error) {
+      toast.error("Error registering user");
+    }
   };
 
   return (
     <AuthModal heading="Register">
-      <form className="flex flex-col py-2" onSubmit={handleSubmit}>
-        <InputBox type="text" name="name" placeholder="Full Name" />
-        <InputBox type="email" name="email" placeholder="Email Address" />
-        <InputBox type="password" name="password" placeholder="Password" />
+      <form
+        autoComplete="off"
+        className="flex flex-col py-2"
+        onSubmit={handleSubmit}
+        method="POST"
+      >
+        <InputBox
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
+        <InputBox
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
+        <InputBox
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleInputChange}
+          required
+        />
         <InputBox
           type="password"
           name="confirmPassword"
           placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          required
         />
         <SubmitButton
-          text={inProgress ? "Registering..." : "Register"}
-          disabled={inProgress}
+          text={"Register"}
+          dynamic={true}
+          inProgressText="Registering..."
         />
         <a href="/login" className="text-center text-xs">
           Login

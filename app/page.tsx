@@ -12,16 +12,21 @@ export default function HomePage() {
       redirect("/login");
     },
   });
+
   const handleLogout = async () => {
-    await signOut();
-    toast.success("Logout Successful!");
+    try {
+      await signOut();
+      toast.success("Logout Successful!");
+    } catch (error) {
+      toast.error("Error logging out");
+    }
   };
+
   return (
     <main className="flex flex-col items-center justify-center h-screen">
-      {session?.user && (
+      {session?.user ? (
         <>
-          <h1 className="text-3xl">{session?.user.name}</h1>
-          <br />
+          <h1 className="text-3xl">{session.user.name}</h1>
           <button
             className="font-medium mt-2 text-blue-600 hover:underline"
             onClick={handleLogout}
@@ -29,8 +34,7 @@ export default function HomePage() {
             Log out
           </button>
         </>
-      )}
-      {!session?.user && (
+      ) : (
         <Link
           className="font-medium mt-2 text-blue-600 hover:underline"
           href="/login"
