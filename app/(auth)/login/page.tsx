@@ -2,15 +2,17 @@
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsProcessing(true);
     try {
       const formData = new FormData(e.currentTarget);
       const response = await signIn("credentials", {
@@ -27,6 +29,8 @@ export default function Login() {
     } catch (error: any) {
       console.error("Login Error: ", error.message);
       return "Something Went Wrong!";
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -51,9 +55,8 @@ export default function Login() {
           required
         />
         <SubmitButton
-          text={"Login"}
-          dynamic={true}
-          inProgressText="Logging in..."
+          text={isProcessing ? "Logging in..." : "Login"}
+          disabled={isProcessing}
         />
         <div className="text-center text-xs">
           <a href="/register" className="hover:text-green-400">

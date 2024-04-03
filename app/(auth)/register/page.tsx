@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function Register() {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,7 +26,7 @@ export default function Register() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsProcessing(true);
     const { name, email, password, confirmPassword } = formData;
 
     if (!name || !email || !password || !confirmPassword) {
@@ -46,10 +47,17 @@ export default function Register() {
         },
         body: JSON.stringify({ name, email, password }),
       });
-      toast.success("Registration successful!");
-      router.push("/login");
+      const { message }: { message: string } = await response.json();
+      if (response?.ok) {
+        toast.success(message);
+        router.push("/login");
+      } else {
+        toast.error(message);
+      }
     } catch (error) {
       toast.error("Error registering user");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -94,9 +102,8 @@ export default function Register() {
           required
         />
         <SubmitButton
-          text={"Register"}
-          dynamic={true}
-          inProgressText="Registering..."
+          text={isProcessing ? "Processing..." : "Register"}
+          disabled={isProcessing}
         />
         <a href="/login" className="text-center text-xs">
           Login
