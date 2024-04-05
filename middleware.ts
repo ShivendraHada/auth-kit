@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
   if (
     pathname === "/register" ||
     pathname === "/login" ||
-    pathname === "/forgot-password"
+    pathname === "/forgotPassword"
   ) {
     return NextResponse.next();
   }
