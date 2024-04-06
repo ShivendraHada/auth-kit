@@ -25,17 +25,17 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       );
     }
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Update the user's password
-    await userData.updateOne({ password });
+    await userData.updateOne({ password: hashedPassword });
 
     return NextResponse.json(
       { message: "Password Changed Successful!" },
       { status: 200 }
     );
   } catch (error: any) {
-    return NextResponse.json(
-      { message: "Something went wrong!" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

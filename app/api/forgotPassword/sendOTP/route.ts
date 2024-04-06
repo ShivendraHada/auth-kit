@@ -30,17 +30,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         { message: "OTP Sent!", hashedOTP },
         { status: 200 }
       );
+    } else {
+      return NextResponse.json(
+        { message: "Something went wrong!" },
+        { status: 200 }
+      );
     }
-
-    return NextResponse.json(
-      { message: "Something Went Wrong!" },
-      { status: 500 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Something went wrong!" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 

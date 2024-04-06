@@ -22,7 +22,10 @@ const SendOTPForm = ({
         placeholder="Email Address"
         required
       />
-      <SubmitButton text={"Send OTP"} disabled={isSubmitting} />
+      <SubmitButton
+        text={isSubmitting ? "Processing..." : "Send OTP"}
+        disabled={isSubmitting}
+      />
     </form>
   );
 };
@@ -31,10 +34,12 @@ const ResetPasswordForm = ({
   onSubmit,
   emailAddress,
   setShowSendOTP,
+  isSubmitting,
 }: {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   emailAddress: string | undefined;
   setShowSendOTP: React.Dispatch<React.SetStateAction<boolean>>;
+  isSubmitting: boolean;
 }) => {
   return (
     <form onSubmit={onSubmit} className="flex flex-col py-1">
@@ -60,7 +65,7 @@ const ResetPasswordForm = ({
         placeholder="Confirm Password"
         required
       />
-      <SubmitButton text={"Change Password"} />
+      <SubmitButton text={isSubmitting ? "Processing..." : "Change Password"} />
       <div className="text-center text-xs">
         <a href="/login" className="hover:text-green-400">
           Login
@@ -84,27 +89,33 @@ export default function ForgotPassword() {
 
   const handleSendOTPSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email")?.toString();
-    if (!email) {
-      return toast.warn("Check your email address");
-    }
-    const response = await fetch("/api/forgotPassword/sendOTP", {
-      method: "POST",
-      body: JSON.stringify({ email }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const { message, hashedOTP } = await response.json();
-    if (response.ok) {
-      toast.success(message);
-      setHashOTP(hashedOTP);
-      setEmailAddress(email);
-      setShowSendOTP(false);
-    } else {
-      toast.error(message);
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData(e.currentTarget);
+      const email = formData.get("email")?.toString();
+      if (!email) {
+        return toast.warn("Check your email address");
+      }
+      const response = await fetch("/api/forgotPassword/sendOTP", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { message, hashedOTP } = await response.json();
+      if (response.ok) {
+        toast.success(message);
+        setHashOTP(hashedOTP);
+        setEmailAddress(email);
+        setShowSendOTP(false);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,32 +123,38 @@ export default function ForgotPassword() {
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const password = formData.get("password")?.toString();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const password = formData.get("password")?.toString();
 
-    if (password !== formData.get("confirmPassword")) {
-      toast.error("Password and Confirm Password must be the same");
-      return;
-    }
+      if (password !== formData.get("confirmPassword")) {
+        toast.error("Password and Confirm Password must be the same");
+        return;
+      }
 
-    const response = await fetch("/api/forgotPassword/changePassword", {
-      method: "PUT",
-      body: JSON.stringify({
-        emailAddress,
-        otp: formData.get("otp"),
-        hashOTP,
-        password,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const { message } = await response.json();
-    if (response.ok) {
-      toast.success(message);
-      router.push("/login");
-    } else {
-      toast.error(message);
+      const response = await fetch("/api/forgotPassword/changePassword", {
+        method: "PUT",
+        body: JSON.stringify({
+          emailAddress,
+          otp: formData.get("otp"),
+          hashOTP,
+          password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { message } = await response.json();
+      if (response.ok) {
+        toast.success(message);
+        router.push("/login");
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -160,6 +177,7 @@ export default function ForgotPassword() {
             onSubmit={handleForgotPasswordSubmit}
             emailAddress={emailAddress}
             setShowSendOTP={setShowSendOTP}
+            isSubmitting={isSubmitting}
           />
         </AuthModal>
       )}
