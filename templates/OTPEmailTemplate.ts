@@ -1,5 +1,9 @@
-const otpMailTemplate = `
-<!DOCTYPE html>
+interface OTPTemplateProps {
+  OTP: number;
+}
+
+export default function OTPEmailTemplate({ OTP }: OTPTemplateProps) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -45,11 +49,10 @@ const otpMailTemplate = `
     <h1>Your One-Time Password (OTP)</h1>
     <p>Please use the following OTP to complete your transaction:</p>
     <div class="otp-box">
-      <span>{{OTP}}</span>
+      <span>${OTP}</span>
     </div>
     <p>This OTP is valid for the next 5 minutes.</p>
   </div>
 </body>
-</html>
-`;
-export default otpMailTemplate;
+</html>`;
+}
