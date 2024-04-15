@@ -1,7 +1,7 @@
-# AuthEase: Next.js Authentication Made Effortless
+# AuthKit: Next.js Authentication Made Effortless
 
-AuthEase is a comprehensive Next.js repository designed to simplify the
-authentication setup process for your projects. With AuthEase, you can
+AuthKit is a comprehensive Next.js repository designed to simplify the
+authentication setup process for your projects. With AuthKit, you can
 effortlessly integrate robust authentication features into your Next.js
 applications, including login, registration, and forgot password
 functionalities. Say goodbye to boilerplate code and headaches, and
@@ -27,12 +27,12 @@ hello to a seamless authentication experience!
 
 ## Getting Started
 
-To get started with AuthEase, follow these simple steps:
+To get started with AuthKit, follow these simple steps:
 
 1.  **Clone the Repository**: Clone this repository to your local machine.
 
 ```
-    git clone https://github.com/your-username/authease.git
+    git clone https://github.com/ShivendraHada/auth-kit.git
 ```
 
 2.  **Install Dependencies**: Navigate into the project directory and install the necessary dependencies.
@@ -68,7 +68,7 @@ To get started with AuthEase, follow these simple steps:
     npm run dev
 ```
 
-5.  **Explore AuthEase**: Open your browser and navigate to http://localhost:3000 to explore AuthEase and begin integrating authentication features into your Next.js project!
+5.  **Explore AuthKit**: Open your browser and navigate to http://localhost:3000 to explore AuthKit and begin integrating authentication features into your Next.js project!
 
 ## Contributing
 
@@ -83,7 +83,7 @@ modify, and distribute the code as needed.
 
 ## Acknowledgements
 
-AuthEase is made possible thanks to the incredible work of the
+AuthKit is made possible thanks to the incredible work of the
 open-source community and the following libraries:
 
 - [Next.js](https://nextjs.org/)
@@ -102,4 +102,4 @@ open-source community and the following libraries:
 
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
 
-**AuthEase** - Simplify authentication in your Next.js projects!
+**AuthKit** - Simplify authentication in your Next.js projects!
