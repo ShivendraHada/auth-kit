@@ -13,22 +13,15 @@ const SendOTPForm = ({
 }: {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isSubmitting: boolean;
-}) => {
-  return (
-    <form onSubmit={onSubmit} className="flex flex-col py-1">
-      <InputBox
-        type="email"
-        name="email"
-        placeholder="Email Address"
-        required
-      />
-      <SubmitButton
-        text={isSubmitting ? "Processing..." : "Send OTP"}
-        disabled={isSubmitting}
-      />
-    </form>
-  );
-};
+}) => (
+  <form onSubmit={onSubmit} className="flex flex-col py-1">
+    <InputBox type="email" name="email" placeholder="Email Address" required />
+    <SubmitButton
+      text={isSubmitting ? "Processing..." : "Send OTP"}
+      disabled={isSubmitting}
+    />
+  </form>
+);
 
 const ResetPasswordForm = ({
   onSubmit,
@@ -40,50 +33,48 @@ const ResetPasswordForm = ({
   emailAddress: string | undefined;
   setShowSendOTP: React.Dispatch<React.SetStateAction<boolean>>;
   isSubmitting: boolean;
-}) => {
-  return (
-    <form onSubmit={onSubmit} className="flex flex-col py-1">
-      <p className="pt-5 pb-2 mx-4 mt-1 relative text-center">
-        Email Address: <br /> {emailAddress}{" "}
-        <button
-          className="text-red-900 text-xs underline"
-          onClick={() => setShowSendOTP(true)}
-        >
-          (Change)
-        </button>
-      </p>
-      <InputBox type="text" name="otp" placeholder="Enter OTP" required />
-      <InputBox
-        type="password"
-        name="password"
-        placeholder="New Password"
-        required
-      />
-      <InputBox
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        required
-      />
-      <SubmitButton text={isSubmitting ? "Processing..." : "Change Password"} />
-      <div className="text-center text-xs">
-        <a href="/login" className="hover:text-green-400">
-          Login
-        </a>{" "}
-        |{" "}
-        <a href="/register" className="hover:text-red-400">
-          Register
-        </a>
-      </div>
-    </form>
-  );
-};
+}) => (
+  <form onSubmit={onSubmit} className="flex flex-col py-1">
+    <p className="pt-5 pb-2 mx-4 mt-1 relative text-center">
+      Email Address: <br /> {emailAddress}{" "}
+      <button
+        className="text-red-900 text-xs underline"
+        onClick={() => setShowSendOTP(true)}
+      >
+        (Change)
+      </button>
+    </p>
+    <InputBox type="text" name="otp" placeholder="Enter OTP" required />
+    <InputBox
+      type="password"
+      name="password"
+      placeholder="New Password"
+      required
+    />
+    <InputBox
+      type="password"
+      name="confirmPassword"
+      placeholder="Confirm Password"
+      required
+    />
+    <SubmitButton text={isSubmitting ? "Processing..." : "Change Password"} />
+    <div className="text-center text-xs">
+      <a href="/login" className="hover:text-green-400">
+        Login
+      </a>{" "}
+      |{" "}
+      <a href="/register" className="hover:text-red-400">
+        Register
+      </a>
+    </div>
+  </form>
+);
 
 export default function ForgotPassword() {
-  const [showSendOTP, setShowSendOTP] = useState<boolean>(true);
-  const [emailAddress, setEmailAddress] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [hashOTP, setHashOTP] = useState<string>("");
+  const [showSendOTP, setShowSendOTP] = useState(true);
+  const [emailAddress, setEmailAddress] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hashOTP, setHashOTP] = useState("");
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -124,10 +115,12 @@ export default function ForgotPassword() {
   ) => {
     e.preventDefault();
     try {
+      setIsSubmitting(true);
       const formData = new FormData(e.currentTarget);
       const password = formData.get("password")?.toString();
+      const confirmPassword = formData.get("confirmPassword")?.toString();
 
-      if (password !== formData.get("confirmPassword")) {
+      if (password !== confirmPassword) {
         toast.error("Password and Confirm Password must be the same");
         return;
       }

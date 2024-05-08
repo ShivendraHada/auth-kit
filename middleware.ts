@@ -3,9 +3,10 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import getEnv from "./utils/envConfig";
 
+const allowedRoutes = ["/register", "/login", "/forgotPassword"];
+
 export default async function middleware(req: NextRequest) {
   const { NEXTAUTH_SECRET } = getEnv();
-
   const session = await getToken({
     req,
     secret: NEXTAUTH_SECRET,
@@ -14,11 +15,7 @@ export default async function middleware(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
 
   // Allow these routes to be accessed without authentication
-  if (
-    pathname === "/register" ||
-    pathname === "/login" ||
-    pathname === "/forgotPassword"
-  ) {
+  if (allowedRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 

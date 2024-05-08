@@ -1,5 +1,5 @@
 // models/user.js
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IUser {
   id: string;
@@ -10,7 +10,7 @@ export interface IUser {
   updatedAt: Date;
 }
 
-const userSchema = new Schema<IUser>(
+const UserSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -41,6 +41,4 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-const UserModel: Model<IUser> = models.User || model<IUser>("User", userSchema);
-
-export default UserModel;
+export default mongoose.models.User || mongoose.model("User", UserSchema);

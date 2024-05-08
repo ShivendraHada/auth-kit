@@ -3,9 +3,10 @@
 import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function Register() {
   const router = useRouter();
@@ -24,20 +25,17 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsProcessing(true);
-    const { name, email, password, confirmPassword } = formData;
 
-    if (!name || !email || !password || !confirmPassword) {
-      toast.error("All fields are required");
-      return;
-    }
+    const { name, email, password, confirmPassword } = formData;
 
     if (password !== confirmPassword) {
       toast.error("Password and Confirm Password must be the same");
       return;
     }
+
+    setIsProcessing(true);
 
     try {
       const response = await fetch("/api/register", {
@@ -47,12 +45,23 @@ export default function Register() {
         },
         body: JSON.stringify({ name, email, password }),
       });
-      const { message }: { message: string } = await response.json();
-      if (response?.ok) {
-        toast.success(message);
-        router.push("/login");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const result = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+        console.log(result);
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          router.push("/");
+        }
       } else {
-        toast.error(message);
+        toast.error(data.error);
       }
     } catch (error) {
       toast.error("Error registering user");

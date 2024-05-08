@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 export default function Login() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
     try {
       const formData = new FormData(e.currentTarget);
       const response = await signIn("credentials", {
-        username: formData.get("username") as string,
+        email: formData.get("email") as string,
         password: formData.get("password") as string,
         redirect: false,
       });
@@ -44,7 +45,7 @@ export default function Login() {
       >
         <InputBox
           type="email"
-          name="username"
+          name="email"
           placeholder="Email Address"
           required
         />

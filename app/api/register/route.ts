@@ -1,41 +1,31 @@
+import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 import User from "@/models/User";
 import DBConnect from "@/utils/DBConnect";
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
 
-export async function POST(req: NextRequest) {
-  try {
-    // Connect to the database
-    await DBConnect();
+export async function POST(request: Request) {
+  const { name, email, password } = await request.json();
 
-    // Get the user data from the request body
-    const { name, email, password } = await req.json();
+  await DBConnect();
 
-    // Check if the email already exists
-    const existingUser = await User.findOne({ email }).exec();
-    if (existingUser) {
-      return NextResponse.json(
-        { message: "Email already exists!" },
-        { status: 409 }
-      );
-    }
+  const existingUser = await User.findOne({ email });
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user
-    await User.create({ name, email, password: hashedPassword });
-
-    // Return a success response
+  if (existingUser) {
     return NextResponse.json(
-      { message: "Registration Successful!" },
-      { status: 201 }
-    );
-  } catch (error: any) {
-    // Handle any errors
-    return NextResponse.json(
-      { message: "Something went wrong!" },
-      { status: 500 }
+      { error: "User already exists!" },
+      { status: 400 }
     );
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = new User({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  await newUser.save();
+
+  return NextResponse.json({ message: "User registered successfully" });
 }

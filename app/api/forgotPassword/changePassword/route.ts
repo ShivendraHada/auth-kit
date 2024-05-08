@@ -14,10 +14,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     // Find the user by email
     const user = await User.findOne({ email: emailAddress });
     if (!user) {
-      return NextResponse.json(
-        { message: "Email Address not registered!" },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "User not found!" }, { status: 404 });
     }
 
     // Verify the OTP
