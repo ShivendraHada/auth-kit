@@ -1,5 +1,5 @@
 import User from "@/models/User";
-import { DBConnect } from "@/utils/DBConnect";
+import DBConnect from "@/utils/DBConnect";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 

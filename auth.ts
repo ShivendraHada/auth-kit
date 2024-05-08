@@ -1,6 +1,9 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authenticateUser } from "./services/userService";
 import { NextAuthOptions } from "next-auth";
+import getEnv from "./utils/envConfig";
+
+const { NEXTAUTH_SECRET } = getEnv();
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -12,7 +15,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: NEXTAUTH_SECRET,
   },
   providers: [
     CredentialsProvider({

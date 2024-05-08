@@ -1,4 +1,4 @@
-import { DBConnect } from "@/utils/DBConnect";
+import DBConnect from "@/utils/DBConnect";
 import { NextRequest, NextResponse } from "next/server";
 import random from "random";
 import User from "@/models/User";

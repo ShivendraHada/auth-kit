@@ -1,19 +1,16 @@
 import mongoose from "mongoose";
+import getEnv from "./envConfig";
 
-export async function DBConnect() {
+export default async function DBConnect() {
   try {
+    const { MONGODB_URI } = getEnv();
     // Check if the connection is already established
     if (mongoose.connection.readyState >= 1) {
       return;
     }
 
-    // Ensure the MongoDB URI is set
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI environment variable is not set.");
-    }
-
     // Connect to the MongoDB database
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(MONGODB_URI);
   } catch (error) {
     // Handle any errors
     console.error("Error connecting to MongoDB:", error);

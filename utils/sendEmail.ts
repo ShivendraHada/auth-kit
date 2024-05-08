@@ -3,20 +3,23 @@ import nodemailer, {
   Transporter,
   TransportOptions,
 } from "nodemailer";
+import getEnv from "./envConfig";
 
 let transporter: Transporter | null = null;
 
 async function getTransporter(): Promise<Transporter> {
+  const { EMAIL_HOST, EMAIL_USERNAME, EMAIL_PASSWORD } = getEnv();
+
   if (transporter) {
     return transporter;
   }
 
   transporter = nodemailer.createTransport({
     port: 465,
-    host: process.env.EMAIL_HOST,
+    host: EMAIL_HOST,
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
+      user: EMAIL_USERNAME,
+      pass: EMAIL_PASSWORD,
     },
     tls: {
       minVersion: "TLSv1.2",

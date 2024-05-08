@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import getEnv from "./utils/envConfig";
 
-export async function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
+  const { NEXTAUTH_SECRET } = getEnv();
+
   const session = await getToken({
     req,
-    secureCookie: process.env.NEXTAUTH_URL?.startsWith("https://"),
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: NEXTAUTH_SECRET,
   });
 
   const { pathname, origin } = req.nextUrl;
