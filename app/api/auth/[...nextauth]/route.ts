@@ -20,59 +20,57 @@ const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        await DBConnect();
+        try {
+          await DBConnect();
 
-        const { email, password } = credentials || {};
-        if (!email || !password) {
-          throw new Error("Email and password are required");
-        }
+          const { email, password } = credentials || {};
+          if (!email || !password) {
+            throw new Error("Email and password are required");
+          }
 
-        const { BASE_URL } = getEnv();
-        const user = await User.findOne({ email });
+          const { BASE_URL } = getEnv();
+          const user = await User.findOne({ email });
 
-        if (!user) {
-          throw new Error("No user found with the email");
-        }
+          if (!user) {
+            throw new Error("No user found with the email");
+          }
 
-        const { status, name, password: hashedPassword } = user;
+          const { status, name, password: hashedPassword } = user;
 
-        switch (status) {
-          case "NotConfirmed":
-            const newConfirmationCode = nanoid(12);
-            await user.updateOne({ confirmationCode: newConfirmationCode });
-            await sendConfirmationEmail({
-              email,
-              confirmationLink: new URL(
-                `${BASE_URL}/api/confirm-email?email=${email}&code=${newConfirmationCode}`
-              ),
-              userName: name.split(" ")[0],
-            });
-            throw new Error(
-              "Your account is not confirmed yet. Please check your email for the confirmation link."
-            );
+          switch (status) {
+            case "NotConfirmed":
+              const newConfirmationCode = nanoid(12);
+              await user.updateOne({ confirmationCode: newConfirmationCode });
+              await sendConfirmationEmail({
+                email,
+                confirmationLink: new URL(
+                  `${BASE_URL}/api/confirm-email?email=${email}&code=${newConfirmationCode}`
+                ),
+                userName: name.split(" ")[0],
+              });
+              return { error: "Please verify your email address" };
 
-          case "Inactive":
-            throw new Error(
-              "Your account is currently inactive. Please contact the administrator."
-            );
+            case "Inactive":
+              return { error: "Your account is currently inactive" };
 
-          case "Disabled":
-            throw new Error(
-              "Your account has been disabled. Please contact the administrator."
-            );
+            case "Disabled":
+              return { error: "Your account has been disabled" };
 
-          case "Active":
-            const isValidPassword = await bcrypt.compare(
-              password,
-              hashedPassword
-            );
-            if (!isValidPassword) {
-              throw new Error("Password is invalid");
-            }
-            return user;
+            case "Active":
+              const isValidPassword = await bcrypt.compare(
+                password,
+                hashedPassword
+              );
+              if (!isValidPassword) {
+                return { error: "Password is invalid" };
+              }
+              return user;
 
-          default:
-            throw new Error("Invalid user status");
+            default:
+              return { error: "Error fetching data!" };
+          }
+        } catch (error) {
+          throw new Error((error as Error).message);
         }
       },
     }),
