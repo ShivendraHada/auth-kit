@@ -1,16 +1,28 @@
 "use client";
-import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SubmitButton } from "@/components/elements/Button";
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  
+
+  useEffect(() => {
+    const confirmedEmail = searchParams.get("confirmedEmail");
+    const error = searchParams.get("error");
+    if (confirmedEmail) {
+      toast.success("Email Verified!", { toastId: "once" });
+    } else if (error) {
+      toast.error("Email Verification Failed!"), { toastId: "once" };
+    }
+    router.push("/login");
+  });
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -21,11 +33,12 @@ export default function Login() {
         password: formData.get("password") as string,
         redirect: false,
       });
+      console.log(response);
       if (response?.ok) {
         toast.success("Login Successful!");
         router.push("/");
       } else {
-        toast.warn("Invalid Credentials!");
+        toast.warn(response?.error);
       }
     } catch (error: any) {
       console.error("Login Error: ", error.message);

@@ -3,7 +3,13 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import getEnv from "./utils/envConfig";
 
-const allowedRoutes = ["/register", "/login", "/forgotPassword"];
+const allowedRoutes = [
+  "/register",
+  "/login",
+  "/forgotPassword",
+  "/confirmEmailAddress",
+  "/api/confirm-email",
+];
 
 export default async function middleware(req: NextRequest) {
   const { NEXTAUTH_SECRET } = getEnv();

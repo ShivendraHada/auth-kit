@@ -1,4 +1,3 @@
-// models/user.js
 import mongoose, { Schema } from "mongoose";
 
 export interface IUser {
@@ -6,6 +5,9 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  confirmationCode: string;
+  otpCode: string;
+  status: "Active" | "Inactive" | "NotConfirmed" | "Disabled";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,9 +37,26 @@ const UserSchema = new Schema<IUser>(
       required: [true, "Must provide a password."],
       minlength: [8, "Password must be at least 8 characters long."],
     },
+    confirmationCode: {
+      type: String,
+      required: false,
+    },
+    otpCode: {
+      type: String,
+      required: false,
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Inactive", "NotConfirmed", "Disabled"],
+      required: true,
+      default: "NotConfirmed",
+    },
   },
   {
-    timestamps: true,
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   }
 );
 

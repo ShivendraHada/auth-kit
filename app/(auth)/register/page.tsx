@@ -1,12 +1,11 @@
 "use client";
 
-import SubmitButton from "@/components/elements/Button";
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { SubmitButton } from "@/components/elements/Button";
 
 export default function Register() {
   const router = useRouter();
@@ -49,17 +48,8 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        const result = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
-        });
-        console.log(result);
-        if (result?.error) {
-          toast.error(result.error);
-        } else {
-          router.push("/");
-        }
+        toast.success(data.message);
+        router.push("/login");
       } else {
         toast.error(data.error);
       }

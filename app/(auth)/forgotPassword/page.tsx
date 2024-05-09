@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import AuthModal from "@/components/modals/AuthModal";
 import InputBox from "@/components/elements/Input";
-import SubmitButton from "@/components/elements/Button";
+import { SubmitButton } from "@/components/elements/Button";
 import { toast } from "react-toastify";
 
 const SendOTPForm = ({
@@ -87,7 +87,7 @@ export default function ForgotPassword() {
       if (!email) {
         return toast.warn("Check your email address");
       }
-      const response = await fetch("/api/forgotPassword/sendOTP", {
+      const response = await fetch("/api/forgot-password/send-otp", {
         method: "POST",
         body: JSON.stringify({ email }),
         headers: {

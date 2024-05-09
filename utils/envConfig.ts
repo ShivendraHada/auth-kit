@@ -4,6 +4,7 @@ type EnvVariables = {
   EMAIL_HOST: string;
   EMAIL_USERNAME: string;
   EMAIL_PASSWORD: string;
+  BASE_URL: string;
 };
 
 let envs: EnvVariables | null = null;
@@ -19,6 +20,7 @@ const getEnv = (): EnvVariables => {
     EMAIL_HOST: process.env.EMAIL_HOST || "",
     EMAIL_USERNAME: process.env.EMAIL_USERNAME || "",
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || "",
+    BASE_URL: process.env.BASE_URL || "",
   };
 
   const emptyKeys = isAnyKeyEmpty(envs);
