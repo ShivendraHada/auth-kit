@@ -40,14 +40,14 @@ export default function Login() {
         return;
       }
 
-      const res = await fetch("/api/login", {
+      const res = await fetch("/api/verify-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) {
+      if (res.status === 200) {
         const response = await signIn("credentials", {
           email,
           password,

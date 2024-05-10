@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
           userName: name.split(" ")[0],
         });
         return NextResponse.json(
-          { message: "Verification email sent" },
-          { status: 200 }
+          { message: "Verification email sent! Please verify email address." },
+          { status: 401 }
         );
 
       case "Inactive":
