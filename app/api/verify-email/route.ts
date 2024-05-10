@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
           userName: name.split(" ")[0],
         });
         return NextResponse.json(
-          { message: "Verification email sent! Please verify email address." },
+          { error: "Verification email sent! Please verify email address." },
           { status: 401 }
         );
 
