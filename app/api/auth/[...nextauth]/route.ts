@@ -4,9 +4,6 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import User from "../../../../models/User";
 import DBConnect from "@/utils/DBConnect";
-import sendConfirmationEmail from "@/utils/sendConfirmationEmail";
-import getEnv from "@/utils/envConfig";
-import { nanoid } from "nanoid";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -25,57 +22,24 @@ const authOptions: NextAuthOptions = {
 
           const { email, password } = credentials || {};
           if (!email || !password) {
-            return { error: "Email and password are required" };
+            return null;
           }
 
-          const { BASE_URL } = getEnv();
           const user = await User.findOne({ email });
 
-          if (!user) {
-            return { error: "No user found with the email" };
-          }
-
-          const { status, name, password: hashedPassword } = user;
-
-          switch (status) {
-            case "NotConfirmed":
-              const newConfirmationCode = nanoid(12);
-              const confirmationLink = new URL(
-                `${BASE_URL}/api/confirm-email?email=${email}&code=${newConfirmationCode}`
-              );
-              await user.updateOne({ confirmationCode: newConfirmationCode });
-              await sendConfirmationEmail({
-                email,
-                confirmationLink,
-                userName: name.split(" ")[0],
-              });
-              console.log("NOt confirmedddd....");
-              return { error: "Please verify your email address", status: 404 };
-
-            case "Inactive":
-              return {
-                error: "Your account is currently inactive",
-                status: 403,
-              };
-
-            case "Disabled":
-              return { error: "Your account has been disabled", status: 403 };
-
-            case "Active":
-              const isValidPassword = await bcrypt.compare(
-                password,
-                hashedPassword
-              );
-              if (!isValidPassword) {
-                return { error: "Password is invalid", status: 401 };
-              }
+          if (user) {
+            const isPasswordCorrect = await bcrypt.compare(
+              password,
+              user.password
+            );
+            if (isPasswordCorrect) {
               return user;
-
-            default:
-              return { error: "Error fetching data!", status: 500 };
+            } else {
+              return null;
+            }
           }
-        } catch (error) {
-          return { error: (error as Error).message, status: 500 };
+        } catch (err: any) {
+          throw new Error(err);
         }
       },
     }),

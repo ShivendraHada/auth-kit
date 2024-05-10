@@ -2,10 +2,10 @@
 import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
 import { FormEvent, useEffect, useState } from "react";
-import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SubmitButton } from "@/components/elements/Button";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
@@ -23,22 +23,47 @@ export default function Login() {
     router.push("/login");
   });
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
     try {
       const formData = new FormData(e.currentTarget);
-      const response = await signIn("credentials", {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-        redirect: false,
+      const email: string = formData.get("email") as string;
+      const password: string = formData.get("password") as string;
+
+      if (!isValidEmail(email)) {
+        toast.error("Email is invalid");
+        return;
+      }
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      console.log(response);
-      if (response?.error) {
-        toast.warn(response?.error);
-      } else if (response?.ok) {
-        toast.success("Login Successful!");
-        router.push("/");
+
+      const data = await res.json();
+
+      if (data.message === "Verified") {
+        const response = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+        console.log(response);
+        if (response?.ok) {
+          toast.success("Login Successful!");
+          router.push("/");
+        } else toast.error("Invalid Credentials");
+      } else {
+        toast.error(data.error);
       }
     } catch (error: any) {
       console.error("Login Error: ", error.message);

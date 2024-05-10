@@ -1,5 +1,4 @@
-// app/register/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import DBConnect from "@/utils/DBConnect";
@@ -7,7 +6,7 @@ import User from "@/models/User";
 import getEnv from "@/utils/envConfig";
 import sendConfirmationEmail from "@/utils/sendConfirmationEmail";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest, response: NextResponse) {
   try {
     const { BASE_URL } = getEnv();
     const { name, email, password } = await request.json();
@@ -49,18 +48,16 @@ export async function POST(request: Request) {
       `${BASE_URL}/api/confirm-email?email=${email}&code=${confirmationCode}`
     );
 
-    const success = await sendConfirmationEmail({
+    await sendConfirmationEmail({
       email,
       confirmationLink,
       userName: name.split(" ")[0],
     });
 
-    if (success) {
-      return NextResponse.json(
-        { message: "Please verify your email!" },
-        { status: 200 }
-      );
-    }
+    return NextResponse.json(
+      { message: "Please verify your email!" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error in POST /register:", error);
     return NextResponse.json(

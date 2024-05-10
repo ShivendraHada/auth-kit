@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 const nunito = Nunito({ subsets: ["latin"] });
-import "react-toastify/dist/ReactToastify.css";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
