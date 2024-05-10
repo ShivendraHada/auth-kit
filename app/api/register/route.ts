@@ -45,11 +45,13 @@ export async function POST(request: Request) {
 
     await newUser.save();
 
+    const confirmationLink = new URL(
+      `${BASE_URL}/api/confirm-email?email=${email}&code=${confirmationCode}`
+    );
+
     const success = await sendConfirmationEmail({
       email,
-      confirmationLink: new URL(
-        `${BASE_URL}/api/confirm-email?email=${email}&code=${confirmationCode}`
-      ),
+      confirmationLink,
       userName: name.split(" ")[0],
     });
 
@@ -57,11 +59,6 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { message: "Please verify your email!" },
         { status: 200 }
-      );
-    } else {
-      return NextResponse.json(
-        { message: "Something went wrong!" },
-        { status: 500 }
       );
     }
   } catch (error) {

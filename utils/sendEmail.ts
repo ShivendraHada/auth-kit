@@ -1,8 +1,4 @@
-import nodemailer, {
-  SendMailOptions,
-  Transporter,
-  TransportOptions,
-} from "nodemailer";
+import nodemailer, { SendMailOptions, Transporter } from "nodemailer";
 import getEnv from "./envConfig";
 
 let transporter: Transporter | null = null;
@@ -21,14 +17,18 @@ async function getTransporter(): Promise<Transporter> {
       user: EMAIL_USERNAME,
       pass: EMAIL_PASSWORD,
     },
+    secure: true, // Use secure: true for port 465
     tls: {
-      minVersion: "TLSv1.2",
-      maxVersion: "TLSv1.3",
+      rejectUnauthorized: false, // Add this line to avoid self-signed certificate errors
     },
-    secure: true,
-  } as TransportOptions);
+  });
 
-  await transporter.verify();
+  try {
+    await transporter.verify();
+  } catch (err) {
+    console.error("Error verifying transporter: ", err);
+  }
+
   return transporter;
 }
 

@@ -25,14 +25,14 @@ const authOptions: NextAuthOptions = {
 
           const { email, password } = credentials || {};
           if (!email || !password) {
-            throw new Error("Email and password are required");
+            return { error: "Email and password are required" };
           }
 
           const { BASE_URL } = getEnv();
           const user = await User.findOne({ email });
 
           if (!user) {
-            throw new Error("No user found with the email");
+            return { error: "No user found with the email" };
           }
 
           const { status, name, password: hashedPassword } = user;
@@ -40,21 +40,26 @@ const authOptions: NextAuthOptions = {
           switch (status) {
             case "NotConfirmed":
               const newConfirmationCode = nanoid(12);
+              const confirmationLink = new URL(
+                `${BASE_URL}/api/confirm-email?email=${email}&code=${newConfirmationCode}`
+              );
               await user.updateOne({ confirmationCode: newConfirmationCode });
               await sendConfirmationEmail({
                 email,
-                confirmationLink: new URL(
-                  `${BASE_URL}/api/confirm-email?email=${email}&code=${newConfirmationCode}`
-                ),
+                confirmationLink,
                 userName: name.split(" ")[0],
               });
-              return { error: "Please verify your email address" };
+              console.log("NOt confirmedddd....");
+              return { error: "Please verify your email address", status: 404 };
 
             case "Inactive":
-              return { error: "Your account is currently inactive" };
+              return {
+                error: "Your account is currently inactive",
+                status: 403,
+              };
 
             case "Disabled":
-              return { error: "Your account has been disabled" };
+              return { error: "Your account has been disabled", status: 403 };
 
             case "Active":
               const isValidPassword = await bcrypt.compare(
@@ -62,15 +67,15 @@ const authOptions: NextAuthOptions = {
                 hashedPassword
               );
               if (!isValidPassword) {
-                return { error: "Password is invalid" };
+                return { error: "Password is invalid", status: 401 };
               }
               return user;
 
             default:
-              return { error: "Error fetching data!" };
+              return { error: "Error fetching data!", status: 500 };
           }
         } catch (error) {
-          throw new Error((error as Error).message);
+          return { error: (error as Error).message, status: 500 };
         }
       },
     }),
@@ -92,7 +97,7 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/login",
   },
 };
 

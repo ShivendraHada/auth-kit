@@ -34,11 +34,11 @@ export default function Login() {
         redirect: false,
       });
       console.log(response);
-      if (response?.ok) {
+      if (response?.error) {
+        toast.warn(response?.error);
+      } else if (response?.ok) {
         toast.success("Login Successful!");
         router.push("/");
-      } else {
-        toast.warn(response?.error);
       }
     } catch (error: any) {
       console.error("Login Error: ", error.message);
