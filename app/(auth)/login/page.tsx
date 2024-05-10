@@ -3,30 +3,29 @@ import InputBox from "@/components/elements/Input";
 import AuthModal from "@/components/modals/AuthModal";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { SubmitButton } from "@/components/elements/Button";
 import { signIn } from "next-auth/react";
+import { isValidEmail } from "@/utils/validation";
 
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  useEffect(() => {
+  const handleQueryParams = () => {
     const confirmedEmail = searchParams.get("confirmedEmail");
     const error = searchParams.get("error");
     if (confirmedEmail) {
       toast.success("Email Verified!", { toastId: "once" });
     } else if (error) {
-      toast.error("Email Verification Failed!"), { toastId: "once" };
+      toast.error("Email Verification Failed!", { toastId: "once" });
     }
-    router.push("/login");
-  });
-
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    return emailRegex.test(email);
   };
+
+  useEffect(() => {
+    handleQueryParams();
+  }, [searchParams]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
