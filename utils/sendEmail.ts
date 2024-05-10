@@ -40,7 +40,7 @@ export default async function sendMail(
     await transporter.sendMail(mailData);
     return true;
   } catch (err) {
-    console.error("Error sending mail: ", err);
+    console.error("Error sending mail: ", (err as Error).message);
     return false;
   }
 }

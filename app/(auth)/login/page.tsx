@@ -48,25 +48,22 @@ export default function Login() {
         },
         body: JSON.stringify({ email }),
       });
-
-      const data = await res.json();
-
-      if (data.message === "Verified") {
+      if (res.ok) {
         const response = await signIn("credentials", {
           email,
           password,
           redirect: false,
         });
-        console.log(response);
         if (response?.ok) {
           toast.success("Login Successful!");
           router.push("/");
         } else toast.error("Invalid Credentials");
       } else {
+        const data = await res.json();
         toast.error(data.error);
       }
-    } catch (error: any) {
-      console.error("Login Error: ", error.message);
+    } catch (error) {
+      console.error("Login Error: ", (error as Error).message);
       return "Something Went Wrong!";
     } finally {
       setIsProcessing(false);
